@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-export default function SuccessPage({ reservado, selected, assentos, ids, nome,  cpf}) {
+export default function SuccessPage({ reservado, setReservado, selected, assentos, ids, nome,  cpf}) {
     console.log(assentos)
-
+    function resetBuy (){
+        setReservado([])
+    }
   return (
     
     <PageContainer>
@@ -36,7 +38,7 @@ export default function SuccessPage({ reservado, selected, assentos, ids, nome, 
       </TextContainer>
 
       <Link to="/">
-        <button data-test="go-home-btn">Voltar para Home</button>
+        <button onClick={resetBuy} data-test="go-home-btn">Voltar para Home</button>
       </Link>
     </PageContainer>
   );
