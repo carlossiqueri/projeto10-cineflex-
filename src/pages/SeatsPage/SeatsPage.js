@@ -2,10 +2,10 @@ import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-export default function SeatsPage( { assentos, setAssentos, ids, setIds, nome, setNome, cpf, setCpf}) {
+import { useNavigate } from "react-router-dom";
+export default function SeatsPage( { reservado, setReservado, assentos, setAssentos, ids, setIds, nome, setNome, cpf, setCpf}) {
   const { idSessao } = useParams();
-
+  let navigate = useNavigate()
   useEffect(() => {
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
 
@@ -19,12 +19,13 @@ export default function SeatsPage( { assentos, setAssentos, ids, setIds, nome, s
   }
 
   function choosenSeat(e) {
+    console.log(ids)
     e.preventDefault();
     const url =
-      "https://mock-api.driven.com.br/api/v8/cineflex/Fseats/book-many";
+      "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
+    const ticket = { ids, name:nome, cpf };
     const promise = axios.post(url, ticket);
-    const ticket = { ids, nome, cpf };
-    promise.then((res) => alert("Seus assentos foram reservados com sucesso!"));
+    promise.then((res) => navigate("/sucesso"));
     promise.catch((err) => alert(err.response.data.mensagem));
   }
 
@@ -33,25 +34,30 @@ export default function SeatsPage( { assentos, setAssentos, ids, setIds, nome, s
       Selecione o(s) assento(s)
       <SeatsContainer>
         {assentos.seats.map((s) => (
-          <SeatItem
+          <SeatItem data-test="seat"
             onClick={() => {
               if (!s.isAvailable) {
                 alert("Esse assento não está disponível");
                 return;
               }
 
-              if (ids.includes(s.name)) {
-                let index = ids.indexOf(s.name);
+              if (ids.includes(s.id)) {
+                let index = ids.indexOf(s.id);
                 ids.splice(index, 1);
                 setIds([...ids]);
+
+                let i = reservado.indexOf(s.name)
+                reservado.splice(i, 1)
+                setReservado([...reservado])
               } else {
-                setIds([...ids, s.name]);
+                setIds([...ids, s.id]);
+                setReservado([...reservado, s.name])
               }
               console.log(assentos);
             }}
             key={s.id}
             color={
-              ids.includes(s.name)
+              ids.includes(s.id)
                 ? `#1AAE9E`
                 : s.isAvailable
                 ? `#C3CFD9`
@@ -78,9 +84,10 @@ export default function SeatsPage( { assentos, setAssentos, ids, setIds, nome, s
         </CaptionItem>
       </CaptionContainer>
       <FormContainer>
-        <form>
+        <form onSubmit={choosenSeat}>
           <label htmlFor="nome">Nome do Comprador:</label>
           <input
+          data-test="client-name"
             id="nome"
             placeholder="Digite seu nome..."
             required
@@ -89,21 +96,22 @@ export default function SeatsPage( { assentos, setAssentos, ids, setIds, nome, s
           />
           <label htmlFor="cpf">CPF do Comprador:</label>
           <input
+          data-test="client-cpf"
             id="cpf"
             placeholder="Digite seu CPF..."
             required
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
           />
-          <Link to="/finalizar-pedido">
-            <button type="submit" onSubmit={choosenSeat}>
+          {/* <Link to="/finalizar-pedido"> */}
+            <button type="submit" >
               Reservar Assento(s)
             </button>
-          </Link>
-        </form>
+          {/* </Link> */}
+        </form >
       </FormContainer>
       <FooterContainer>
-        <div>
+        <div data-test="footer">
           <img src={assentos.movie.posterURL} alt={assentos.movie.title} />
         </div>
         <div>

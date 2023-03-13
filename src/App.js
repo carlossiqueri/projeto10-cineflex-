@@ -13,6 +13,7 @@ export default function App() {
   const [ids, setIds] = useState([]);
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
+  const [reservado, setReservado] = useState([])
   return (
     <>
       <BrowserRouter>
@@ -37,6 +38,8 @@ export default function App() {
                 setNome={setNome}
                 cpf={cpf}
                 setCpf={setCpf}
+                reservado={reservado}
+                setReservado={setReservado}
               />
             }
           />
@@ -49,7 +52,7 @@ export default function App() {
             }
           />
           <Route
-            path="/finalizar-pedido"
+            path="/sucesso"
             element={
               <SuccessPage
                 selected={selected}
@@ -62,6 +65,8 @@ export default function App() {
                 setNome={setNome}
                 cpf={cpf}
                 setCpf={setCpf}
+                reservado={reservado}
+                setReservado={setReservado}
               />
             }
           />
