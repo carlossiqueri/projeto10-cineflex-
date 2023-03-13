@@ -21,22 +21,22 @@ export default function SessionsPage({ selected, setSelected }) {
   return (
     <PageContainer>
       Selecione o horário
-      <div data-test="movie-day">
+      <div >
         {selected.days.map((f) => (
-          <SessionContainer key={f.id}>
+          <SessionContainer data-test="movie-day" key={f.id}>
             {f.weekday} - {f.date}
             <ButtonsContainer>
               {f.showtimes.map((s) => (
-                <Link to={`/assentos/${s.id}`}>
-                  <button data-test="showtime" key={s.id}>{s.name}</button>
+                <Link data-test="showtime" to={`/assentos/${s.id}`}>
+                  <button  key={s.id}>{s.name}</button>
                 </Link>
               ))}
             </ButtonsContainer>
           </SessionContainer>
         ))}
       </div>
-      <FooterContainer>
-        <div data-test="footer">
+      <FooterContainer data-test="footer">
+        <div >
           <img src={selected.posterURL} alt={selected.title} />
         </div>
         <div>
