@@ -6,10 +6,10 @@ import { Link } from "react-router-dom";
 
 export default function SessionsPage() {
   const [filme, setFilme] = useState(undefined);
-  const { idFilmes } = useParams();
+  const { idFilme } = useParams();
 
   useEffect(() => {
-    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilmes}/showtimes`;
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
 
     const promise = axios.get(url);
     promise.then((res) => setFilme(res.data));

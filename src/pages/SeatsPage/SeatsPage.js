@@ -5,11 +5,12 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 export default function SeatsPage() {
   const [assentos, setAssentos] = useState(undefined);
-  const { idSeats } = useParams();
+  const { idSessao } = useParams();
   const [ids, setIds] = useState([]);
-
+  const [name, setName] = useState("");
+  const [cpf, setCpf] = useState("");
   useEffect(() => {
-    const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSeats}/seats`;
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
 
     const promise = axios.get(url);
     promise.then((res) => setAssentos(res.data));
@@ -20,28 +21,47 @@ export default function SeatsPage() {
     return <div>Carregando, aguarde...</div>;
   }
 
-  
+  function choosenSeat(e) {
+    e.preventDefault()
+    const url =
+      "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
+    const promise = axios.post(url, ticket);
+    const ticket = { ids, name, cpf };
+    promise.then(res => alert("Seus assentos foram reservados com sucesso!"))
+    promise.catch(err => console.log(err.response.data))
+  }
+
+
   return (
     <PageContainer>
       Selecione o(s) assento(s)
       <SeatsContainer>
         {assentos.seats.map((s) => (
-            
           <SeatItem
             onClick={() => {
-                if (ids.includes(s.id)){
-                    let index = ids.indexOf(s.id)
-                    ids.splice(index, 1)
-                    setIds(...ids)
-                }else{
-                    setIds([...ids, s.id])
-                }
-                console.log(ids)
-                console.log(s)
+              if (!s.isAvailable) {
+                alert("Esse assento não está disponível");
+                return;
+              }
+
+              if (ids.includes(s.id)) {
+                let index = ids.indexOf(s.id);
+                ids.splice(index, 1);
+                setIds([...ids]);
+              } else {
+                setIds([...ids, s.id]);
+              }
+              console.log(assentos);
             }}
             key={s.id}
-            color={ids.includes(s.id) ? `#1AAE9E` : !s.isAvaliable ? `#C3CFD9` : `#FBE192`}
-            border={!s.isAvaliable ? `#7B8B99` : `#F7C52B`}
+            color={
+              ids.includes(s.id)
+                ? `#1AAE9E`
+                : s.isAvailable
+                ? `#C3CFD9`
+                : `#FBE192`
+            }
+            border={s.isAvailable ? `#7B8B99` : `#F7C52B`}
           >
             {s.name}
           </SeatItem>
@@ -62,25 +82,40 @@ export default function SeatsPage() {
         </CaptionItem>
       </CaptionContainer>
       <FormContainer>
-        Nome do Comprador:
-        <input placeholder="Digite seu nome..." />
-        CPF do Comprador:
-        <input placeholder="Digite seu CPF..." />
-        <button onClick={() => {
-            const url = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many"
-            const promise = axios.post(url)
-
-            promise.then(res => console.log(res.data))
-            promise.catch(err => console.log(err.response.data))
-        }}>Reservar Assento(s)</button>
+        <form>
+          <label htmlFor="name">Nome do Comprador:</label>
+          <input
+            id="name"
+            placeholder="Digite seu nome..."
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <label htmlFor="cpf">CPF do Comprador:</label>
+          <input
+            id="cpf"
+            placeholder="Digite seu CPF..."
+            required
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+          />
+          <Link to="/finalizar-pedido">
+          <button type="submit" onSubmit={choosenSeat}>
+            Reservar Assento(s)
+          </button>
+          </Link>
+        </form>
       </FormContainer>
       <FooterContainer>
         <div>
-          <img src="#" alt="#" />
+          <img src={assentos.movie.posterURL} alt={assentos.movie.title} />
+          {console.log(assentos)}
         </div>
         <div>
-          <p>"#"</p>
-          <p>Sexta - 14h00</p>
+          <p>{assentos.movie.title}</p>
+          <p>
+            {assentos.day.weekday} - {assentos.name}
+          </p>
         </div>
       </FooterContainer>
     </PageContainer>
@@ -98,6 +133,9 @@ const PageContainer = styled.div`
   margin-top: 30px;
   padding-bottom: 120px;
   padding-top: 70px;
+  a {
+        text-decoration: none;
+    }
 `;
 const SeatsContainer = styled.div`
   width: 330px;
@@ -183,6 +221,7 @@ const FooterContainer = styled.div`
       height: 70px;
       padding: 8px;
     }
+   
   }
 
   div:nth-child(2) {
@@ -195,5 +234,6 @@ const FooterContainer = styled.div`
         margin-top: 10px;
       }
     }
+    
   }
 `;
