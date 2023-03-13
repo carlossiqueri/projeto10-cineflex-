@@ -25,7 +25,8 @@ export default function SeatsPage( { reservado, setReservado, assentos, setAssen
       "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
     const ticket = { ids, name:nome, cpf };
     const promise = axios.post(url, ticket);
-    promise.then((res) => navigate("/sucesso"));
+    promise.then((res) => {navigate("/sucesso") 
+    setIds([])});
     promise.catch((err) => alert(err.response.data.mensagem));
   }
 
