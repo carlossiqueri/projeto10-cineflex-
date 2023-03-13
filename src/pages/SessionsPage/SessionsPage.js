@@ -4,32 +4,32 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-export default function SessionsPage() {
-  const [filme, setFilme] = useState(undefined);
+export default function SessionsPage({ selected, setSelected }) {
   const { idFilme } = useParams();
 
   useEffect(() => {
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
 
     const promise = axios.get(url);
-    promise.then((res) => setFilme(res.data));
+    promise.then((res) => setSelected(res.data));
     promise.catch((err) => console.log(err.response.data));
   }, []);
 
-  if (filme === undefined) {
+  if (selected === undefined) {
     return <div>Carregando, aguarde...</div>;
   }
   return (
     <PageContainer>
       Selecione o horário
       <div>
-        {console.log(filme.days)}
-        {filme.days.map((filme) => (
-          <SessionContainer key={filme.id}>
-            {filme.weekday} - {filme.date}
+        {selected.days.map((f) => (
+          <SessionContainer key={f.id}>
+            {f.weekday} - {f.date}
             <ButtonsContainer>
-              {filme.showtimes.map((s) => (
-                <Link to={`/assentos/${s.id}`}><button key={s.id}>{s.name}</button></Link>
+              {f.showtimes.map((s) => (
+                <Link to={`/assentos/${s.id}`}>
+                  <button key={s.id}>{s.name}</button>
+                </Link>
               ))}
             </ButtonsContainer>
           </SessionContainer>
@@ -37,10 +37,10 @@ export default function SessionsPage() {
       </div>
       <FooterContainer>
         <div>
-          <img src={filme.posterURL} alt={filme.title} />
+          <img src={selected.posterURL} alt={selected.title} />
         </div>
         <div>
-          <p>{filme.title}</p>
+          <p>{selected.title}</p>
         </div>
       </FooterContainer>
     </PageContainer>

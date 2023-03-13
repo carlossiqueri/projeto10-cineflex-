@@ -3,12 +3,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-export default function SeatsPage() {
-  const [assentos, setAssentos] = useState(undefined);
+export default function SeatsPage( { assentos, setAssentos, ids, setIds, nome, setNome, cpf, setCpf}) {
   const { idSessao } = useParams();
-  const [ids, setIds] = useState([]);
-  const [name, setName] = useState("");
-  const [cpf, setCpf] = useState("");
+
   useEffect(() => {
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
 
@@ -22,15 +19,14 @@ export default function SeatsPage() {
   }
 
   function choosenSeat(e) {
-    e.preventDefault()
+    e.preventDefault();
     const url =
-      "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
+      "https://mock-api.driven.com.br/api/v8/cineflex/Fseats/book-many";
     const promise = axios.post(url, ticket);
-    const ticket = { ids, name, cpf };
-    promise.then(res => alert("Seus assentos foram reservados com sucesso!"))
-    promise.catch(err => console.log(err.response.data))
+    const ticket = { ids, nome, cpf };
+    promise.then((res) => alert("Seus assentos foram reservados com sucesso!"));
+    promise.catch((err) => alert(err.response.data.mensagem));
   }
-
 
   return (
     <PageContainer>
@@ -44,18 +40,18 @@ export default function SeatsPage() {
                 return;
               }
 
-              if (ids.includes(s.id)) {
-                let index = ids.indexOf(s.id);
+              if (ids.includes(s.name)) {
+                let index = ids.indexOf(s.name);
                 ids.splice(index, 1);
                 setIds([...ids]);
               } else {
-                setIds([...ids, s.id]);
+                setIds([...ids, s.name]);
               }
               console.log(assentos);
             }}
             key={s.id}
             color={
-              ids.includes(s.id)
+              ids.includes(s.name)
                 ? `#1AAE9E`
                 : s.isAvailable
                 ? `#C3CFD9`
@@ -83,13 +79,13 @@ export default function SeatsPage() {
       </CaptionContainer>
       <FormContainer>
         <form>
-          <label htmlFor="name">Nome do Comprador:</label>
+          <label htmlFor="nome">Nome do Comprador:</label>
           <input
-            id="name"
+            id="nome"
             placeholder="Digite seu nome..."
             required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
           />
           <label htmlFor="cpf">CPF do Comprador:</label>
           <input
@@ -100,16 +96,15 @@ export default function SeatsPage() {
             onChange={(e) => setCpf(e.target.value)}
           />
           <Link to="/finalizar-pedido">
-          <button type="submit" onSubmit={choosenSeat}>
-            Reservar Assento(s)
-          </button>
+            <button type="submit" onSubmit={choosenSeat}>
+              Reservar Assento(s)
+            </button>
           </Link>
         </form>
       </FormContainer>
       <FooterContainer>
         <div>
           <img src={assentos.movie.posterURL} alt={assentos.movie.title} />
-          {console.log(assentos)}
         </div>
         <div>
           <p>{assentos.movie.title}</p>
@@ -134,8 +129,8 @@ const PageContainer = styled.div`
   padding-bottom: 120px;
   padding-top: 70px;
   a {
-        text-decoration: none;
-    }
+    text-decoration: none;
+  }
 `;
 const SeatsContainer = styled.div`
   width: 330px;
@@ -221,7 +216,6 @@ const FooterContainer = styled.div`
       height: 70px;
       padding: 8px;
     }
-   
   }
 
   div:nth-child(2) {
@@ -234,6 +228,5 @@ const FooterContainer = styled.div`
         margin-top: 10px;
       }
     }
-    
   }
 `;

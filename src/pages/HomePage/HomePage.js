@@ -4,8 +4,8 @@ import axios from "axios";
 import Filme from "../../components/Filme";
 import { Link } from "react-router-dom";
 
-export default function HomePage() {
-  const [filmes, setFilmes] = useState([]);
+export default function HomePage({ filmes, setFilmes}) {
+  
 
   useEffect(() => {
     const url = "https://mock-api.driven.com.br/api/v8/cineflex/movies";

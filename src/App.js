@@ -4,8 +4,15 @@ import SeatsPage from "./pages/SeatsPage/SeatsPage";
 import SessionsPage from "./pages/SessionsPage/SessionsPage";
 import SuccessPage from "./pages/SuccessPage/SuccessPage";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function App() {
+  const [filmes, setFilmes] = useState([]);
+  const [selected, setSelected] = useState(undefined);
+  const [assentos, setAssentos] = useState(undefined);
+  const [ids, setIds] = useState([]);
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
   return (
     <>
       <BrowserRouter>
@@ -14,10 +21,50 @@ export default function App() {
         </Link>
 
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/assentos/:idSessao" element={<SeatsPage />} />
-          <Route path="/sessoes/:idFilme" element={<SessionsPage />} />
-          <Route path="/finalizar-pedido" element={<SuccessPage />} />
+          <Route
+            path="/"
+            element={<HomePage filmes={filmes} setFilmes={setFilmes} />}
+          />
+          <Route
+            path="/assentos/:idSessao"
+            element={
+              <SeatsPage
+                assentos={assentos}
+                setAssentos={setAssentos}
+                ids={ids}
+                setIds={setIds}
+                nome={nome}
+                setNome={setNome}
+                cpf={cpf}
+                setCpf={setCpf}
+              />
+            }
+          />
+          <Route
+            path="/sessoes/:idFilme"
+            element={
+              <SessionsPage 
+              selected={selected} 
+              setSelected={setSelected} />
+            }
+          />
+          <Route
+            path="/finalizar-pedido"
+            element={
+              <SuccessPage
+                selected={selected}
+                setSelected={setSelected}
+                assentos={assentos}
+                setAssentos={setAssentos}
+                ids={ids}
+                setIds={setIds}
+                nome={nome}
+                setNome={setNome}
+                cpf={cpf}
+                setCpf={setCpf}
+              />
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>
