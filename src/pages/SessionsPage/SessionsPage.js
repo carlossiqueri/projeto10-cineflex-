@@ -1,7 +1,24 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"
 import styled from "styled-components"
+import { Link } from "react-router-dom";
 
 export default function SessionsPage() {
+const [filme, setFilme] = useState(undefined);
+const {idFilmes} = useParams();
 
+useEffect(() =>  {
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilmes}/showtimes`
+
+    const promise = axios.get(url)
+    promise.then(res => setFilme(res.data))
+    promise.catch(err => console.log(err.response.data))
+})
+
+if (filme === undefined) {
+    return <div>Carregando, aguarde...</div>
+}
     return (
         <PageContainer>
             Selecione o horário
@@ -10,7 +27,9 @@ export default function SessionsPage() {
                     Sexta - 03/03/2023
                     <ButtonsContainer>
                         <button>14:00</button>
+                        
                         <button>15:00</button>
+                        
                     </ButtonsContainer>
                 </SessionContainer>
 
@@ -33,10 +52,10 @@ export default function SessionsPage() {
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={filme.posterURL} alt={filme.title} />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
+                    <p>{filme.title}</p>
                 </div>
             </FooterContainer>
 

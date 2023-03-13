@@ -1,7 +1,23 @@
 import styled from "styled-components"
-
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"
+import { Link } from "react-router-dom";
 export default function SeatsPage() {
+    const [filme, setFilme] = useState(undefined);
+    const {idFilmes} = useParams();
 
+    useEffect(() =>  {
+        const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idFilmes}/seats`
+    
+        const promise = axios.get(url)
+        promise.then(res => setFilme(res.data))
+        promise.catch(err => console.log(err.response.data))
+    }, [])
+    
+    if (filme === undefined) {
+        return <div>Carregando, aguarde...</div>
+    }
     return (
         <PageContainer>
             Selecione o(s) assento(s)
@@ -41,10 +57,10 @@ export default function SeatsPage() {
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={filme.posterURL} alt={filme.title} />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
+                    <p>{filme.tile}</p>
                     <p>Sexta - 14h00</p>
                 </div>
             </FooterContainer>
